@@ -22,7 +22,7 @@ public class TankDrive extends OpMode {
     @Override
     public void loop() {
         float leftY = -gamepad1.left_stick_y;
-        float rightY = -gamepad2.right_stick_y;
+        float rightY = -gamepad1.right_stick_y;
 //        leftY = (leftY == 0) ? -gamepad2.left_stick_y : leftY;
 //        rightY = (rightY == 0) ? -gamepad2.right_stick_y : rightY;
 
