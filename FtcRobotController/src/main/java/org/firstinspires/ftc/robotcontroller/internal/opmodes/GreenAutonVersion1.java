@@ -6,6 +6,7 @@ package org.firstinspires.ftc.robotcontroller.internal.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 public class GreenAutonVersion1 extends OpMode {
 
@@ -17,6 +18,8 @@ public class GreenAutonVersion1 extends OpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double WHEEL_CIRCUMFERENCE_INCHES = WHEEL_DIAMETER_INCHES * Math.PI;
+
     @Override
     public void init() {
         leftMotor = hardwareMap.dcMotor.get("left_drive");
@@ -24,28 +27,40 @@ public class GreenAutonVersion1 extends OpMode {
 
 //        rightMotor.setDirection(DcMotor.Direction.REVERSE);
 
+        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
     }
 
     @Override
     public void loop() {
-driveForward(24);
-
+        driveForward(24);
     }
+
+    public double distanceToRotations(double distance) {
+        double rotations = distance / WHEEL_CIRCUMFERENCE_INCHES;
+        return rotations;
+    }
+
+    public double rotationsToCounts(double rotations) {
+        double counts = rotations * COUNTS_PER_MOTOR_REV;
+        return counts;
+    }
+
     public void driveForward(double distance) {
 
-        leftMotor.setPower(SPEED);
-        rightMotor.setPower(SPEED);
-
-
     }
+
     public void rightTurn(double degrees) {
         leftMotor.setPower(SPEED);
         rightMotor.setPower(0);
     }
+
     public void leftTurn(double degrees) {
         leftMotor.setPower(0);
         rightMotor.setPower(SPEED);
     }
+
     public void stopRobot() {
         leftMotor.setPower(0);
         rightMotor.setPower(0);
