@@ -9,16 +9,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 public class GreenAutonVersion1 extends OpMode {
-
-    DcMotor leftMotor;
-    DcMotor rightMotor;
-    final double SPEED = 0.5;
-    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 0.5 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+    private DcMotor leftMotor;
+    private DcMotor rightMotor;
+    private final double SPEED = 0.5;
+    private final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
+    private final double     DRIVE_GEAR_REDUCTION    = 0.5 ;     // This is < 1.0 if geared UP
+    private final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    private final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double WHEEL_CIRCUMFERENCE_INCHES = WHEEL_DIAMETER_INCHES * Math.PI;
+    private final double WHEEL_CIRCUMFERENCE_INCHES = WHEEL_DIAMETER_INCHES * Math.PI;
+    private final double AUTON_DISTANCE = 5; //TODO: change this to the correct number
 
     @Override
     public void init() {
@@ -29,12 +29,24 @@ public class GreenAutonVersion1 extends OpMode {
 
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
 
+    @Override
+    public void start() {
+        int counts = getCounts(AUTON_DISTANCE);
+        leftMotor.setTargetPosition(counts);
+        rightMotor.setTargetPosition(counts);
+
+        leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftMotor.setPower(0.5);
+        rightMotor.setPower(0.5);
     }
 
     @Override
     public void loop() {
-        driveForward(24);
+
     }
 
     public double distanceToRotations(double distance) {
@@ -47,22 +59,9 @@ public class GreenAutonVersion1 extends OpMode {
         return counts;
     }
 
-    public void driveForward(double distance) {
-
+    public int getCounts(double distance) {
+        int counts = (int) rotationsToCounts(distanceToRotations(distance));
+        return counts;
     }
 
-    public void rightTurn(double degrees) {
-        leftMotor.setPower(SPEED);
-        rightMotor.setPower(0);
-    }
-
-    public void leftTurn(double degrees) {
-        leftMotor.setPower(0);
-        rightMotor.setPower(SPEED);
-    }
-
-    public void stopRobot() {
-        leftMotor.setPower(0);
-        rightMotor.setPower(0);
-    }
 }
