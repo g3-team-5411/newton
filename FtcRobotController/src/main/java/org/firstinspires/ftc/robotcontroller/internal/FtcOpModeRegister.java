@@ -36,7 +36,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
 import com.qualcomm.robotcore.eventloop.opmode.AnnotatedOpModeRegistrar;
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptNullOp;
+import org.firstinspires.ftc.robotcontroller.internal.opmodes.BlueCenterPark;
 import org.firstinspires.ftc.robotcontroller.internal.opmodes.BlueTankDrive;
+import org.firstinspires.ftc.robotcontroller.internal.opmodes.RedCenterPark;
+import org.firstinspires.ftc.robotcontroller.internal.opmodes.GreenPractice;
 import org.firstinspires.ftc.robotcontroller.internal.opmodes.TankDrive;
 
 /**
@@ -81,5 +84,8 @@ public class FtcOpModeRegister implements OpModeRegister {
          */
         manager.register("Tank Drive", TankDrive.class);
         manager.register("Blue Tank Drive", BlueTankDrive.class);
+        manager.register("Red Alliance Autonomous Center Park", RedCenterPark.class);
+        manager.register("Green Practice", GreenPractice.class);
+        manager.register("Blue Alliance Autonomous Center Park", BlueCenterPark.class);
     }
 }
