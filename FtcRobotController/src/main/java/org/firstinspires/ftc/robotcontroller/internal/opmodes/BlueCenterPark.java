@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 
 
@@ -26,22 +27,31 @@ public class BlueCenterPark extends LinearOpMode {
             (WHEEL_DIAMETER_INCHES * 3.1415);
     private final double WHEEL_CIRCUMFERENCE_INCHES = WHEEL_DIAMETER_INCHES * Math.PI;
 
-    private final double AUTON_DISTANCE = 5; //TODO: change this to the correct number
+    private final double AUTON_DISTANCE = 50; //TODO: change this to the correct number
     private GyroSensor gyroSensor;
     private final double TURN_DEGREES = -45;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
         leftMotor = hardwareMap.dcMotor.get("left_drive");
         rightMotor = hardwareMap.dcMotor.get("right_drive");
         gyroSensor = hardwareMap.gyroSensor.get("gyro");
-        driveStraight(AUTON_DISTANCE);
+        rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         calibrateGyro();
-        turn(TURN_DEGREES);
+        waitForStart();
+        telemetry.addData("STARTED", "true");
+        telemetry.update();
         driveStraight(AUTON_DISTANCE);
+        sleep(5000);
+        turn(TURN_DEGREES);
+        sleep(10000);
+        // driveStraight(AUTON_DISTANCE);
 
     }
     public void driveStraight(double distance){
+        telemetry.addData("Driving Straight", "true");
+        telemetry.update();
         double counts = getCounts(distance);
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -51,8 +61,8 @@ public class BlueCenterPark extends LinearOpMode {
         rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftMotor.setPower(0.5);
         rightMotor.setPower(0.5);
-
-
+        telemetry.addData("Driving Straight", "false");
+        telemetry.update();
     }
 //    @Override
 //    public void init() {
@@ -117,10 +127,18 @@ public class BlueCenterPark extends LinearOpMode {
 
     public void turn(double targetDegrees) {
         double currentDegrees = gyroSensor.getHeading();
-        while (currentDegrees < targetDegrees){
+        leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        while (Math.abs(currentDegrees) < Math.abs(targetDegrees)){
             currentDegrees = gyroSensor.getHeading();
-            leftMotor.setPower(SPEED);
+            leftMotor.setPower(.5);
             rightMotor.setPower(0);
+            telemetry.addData("an attempt was made", true);
+            telemetry.addData("Current Degrees", currentDegrees);
+            telemetry.addData("Target Degrees", targetDegrees);
+            telemetry.update();
         }
     }
 
@@ -129,7 +147,11 @@ public class BlueCenterPark extends LinearOpMode {
         while (gyroSensor.isCalibrating()) {
             sleep(50);
             idle();
+            telemetry.addData("Calibrating", "true");
+            telemetry.update();
         }
+        telemetry.addData("Calibrating", "false");
+        telemetry.update();
     }
     public void stopRobot() {
         leftMotor.setPower(0);
